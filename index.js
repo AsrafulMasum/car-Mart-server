@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const app = express()
 
@@ -19,8 +20,8 @@ app.get("/", (req, res)=>{
 // hmasrafulmasum
 // NojdBHMdNVzP1QGo
 
+console.log(process.env.DB_USER);
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://hmasrafulmasum:NojdBHMdNVzP1QGo@carmart.ad0dhwu.mongodb.net/?retryWrites=true&w=majority";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -40,10 +41,31 @@ async function run() {
 
     const database = client.db("carMartDB")
     const usersCollections = database.collection("usersDB")
+    const carsCollections = database.collection("carsDB")
+
+    app.get("/users", async(req, res)=>{
+      const cursor = usersCollections.find()
+      const result = await cursor.toArray()
+      res.send(result)
+    })
 
     app.post("/users", async(req, res)=>{
       const user = req.body
       const result = await usersCollections.insertOne(user)
+      res.send(result)
+    })
+
+
+    app.get("/cars", async(req, res)=>{
+      const cursor = carsCollections.find()
+      const result = await cursor.toArray()
+      res.send(result)
+    })
+
+
+    app.post("/cars", async(req, res)=>{
+      const car = req.body
+      const result = await carsCollections.insertOne(car)
       res.send(result)
     })
 
