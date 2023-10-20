@@ -4,8 +4,13 @@ require("dotenv").config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express()
+const corsOptions ={
+  origin:'*', 
+  credentials:true,
+  optionSuccessStatus:200,
+}
 
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.json())
 
 const port = process.env.PORT || 3000
@@ -18,8 +23,6 @@ app.get("/", (req, res)=>{
   res.send("server is running data will be coming soon...")
 })
 
-
-console.log(process.env.DB_USER);
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@carmart.ad0dhwu.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -117,7 +120,8 @@ async function run() {
 
     app.delete("/cart/:id", async(req, res) => {
       const id = req.params.id
-      const query = {_id : new ObjectId(id)}
+      console.log(id);
+      const query = {_id : id}
       const result = await cartCollections.deleteOne(query)
       res.send(result)
     })
