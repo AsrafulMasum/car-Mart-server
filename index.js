@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express()
 
@@ -42,6 +42,7 @@ async function run() {
     const database = client.db("carMartDB")
     const usersCollections = database.collection("usersDB")
     const carsCollections = database.collection("carsDB")
+    const cartCollections = database.collection("cartDB")
 
     app.get("/users", async(req, res)=>{
       const cursor = usersCollections.find()
@@ -56,6 +57,14 @@ async function run() {
     })
 
 
+    app.get("/cars/:id", async(req, res)=>{
+      const id = req.params.id
+      const query = {_id : new ObjectId(id)}
+      const car = await carsCollections.findOne(query)
+      res.send(car)
+    })
+
+
     app.get("/cars", async(req, res)=>{
       const cursor = carsCollections.find()
       const result = await cursor.toArray()
@@ -66,6 +75,20 @@ async function run() {
     app.post("/cars", async(req, res)=>{
       const car = req.body
       const result = await carsCollections.insertOne(car)
+      res.send(result)
+    })
+
+
+    app.get("/cart", async(req, res)=>{
+      const cursor = cartCollections.find()
+      const result = await cursor.toArray()
+      res.send(result)
+    })
+
+
+    app.post("/cart", async(req, res)=>{
+      const cart = req.body
+      const result = await cartCollections.insertOne(cart)
       res.send(result)
     })
 
