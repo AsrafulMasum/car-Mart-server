@@ -79,6 +79,29 @@ async function run() {
     })
 
 
+    app.put("/cars/:id", async(req, res) => {
+      const id = req.params.id
+      const car = req.body
+      const filter = {_id : new ObjectId(id)}
+      const options = {upsert: true}
+      const updatedCar = {
+        $set: {
+          model: car.model,
+          brand: car.brand,
+          category: car.category,
+          price: car.price,
+          rating: car.rating,
+          photoURL: car.photoURL,
+          description: car.description,
+        }
+      }
+
+      const result = await carsCollections.updateOne(filter, updatedCar, options)
+      res.send(result)
+
+    })
+
+
     app.get("/cart", async(req, res)=>{
       const cursor = cartCollections.find()
       const result = await cursor.toArray()
